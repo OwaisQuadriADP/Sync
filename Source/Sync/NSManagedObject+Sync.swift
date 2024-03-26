@@ -29,7 +29,11 @@ extension NSManagedObject {
      - parameter dataStack: The DataStack instance.
      */
     func sync_fill(with dictionary: [String: Any], parent: NSManagedObject?, parentRelationship: NSRelationshipDescription?, context: NSManagedObjectContext, operations: Sync.OperationOptions, shouldContinueBlock: (() -> Bool)?, objectJSONBlock: ((_ objectJSON: [String: Any]) -> [String: Any])?) {
-        hyp_fill(with: dictionary)
+        if entity.isAlwaysCompleteObject {
+            hyp_replace(with: dictionary)
+        } else {
+            hyp_fill(with: dictionary)
+        }
 
         for relationship in entity.sync_relationships() {
             let suffix = relationship.isToMany ? "_ids" : "_id"
